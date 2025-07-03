@@ -9,7 +9,7 @@ function TaskList({ API_URL }) {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        fetch(API_URL + '/tasks', {
+        fetch(`${API_URL}/tasks`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => res.json())
@@ -18,7 +18,7 @@ function TaskList({ API_URL }) {
 
     const handleAddTask = () => {
         if (input.trim() !== '') {
-            fetch(API_URL + '/tasks', {
+            fetch(`${API_URL}/tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ text: input, category: category })
