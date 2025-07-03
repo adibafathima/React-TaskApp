@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://react-taskapp.onrender.com';
 
 function Register({ onRegister }) {
     const [username, setUsername] = useState('');
