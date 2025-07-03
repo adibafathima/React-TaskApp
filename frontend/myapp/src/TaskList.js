@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function TaskList({ API_URL }) {
     const [tasks, setTasks] = useState([]);
     const [input, setInput] = useState('');
-    const [category, setCategory] = useState('All');
+    const [category, setCategory] = useState('Personal'); // ✅ Should not default to 'All'
     const [filter, setFilter] = useState('All');
 
     const token = localStorage.getItem('token');
@@ -13,7 +13,8 @@ function TaskList({ API_URL }) {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
-            .then(data => setTasks(data));
+            .then(data => setTasks(data))
+            .catch(err => console.log('Error fetching tasks:', err));
     }, [API_URL, token]);
 
     const handleAddTask = () => {
@@ -24,7 +25,8 @@ function TaskList({ API_URL }) {
                 body: JSON.stringify({ text: input, category: category })
             })
                 .then(res => res.json())
-                .then(newTask => setTasks([...tasks, newTask]));
+                .then(newTask => setTasks([...tasks, newTask]))
+                .catch(err => console.log('Error adding task:', err));
 
             setInput('');
         }
@@ -35,7 +37,8 @@ function TaskList({ API_URL }) {
             method: 'DELETE',
             headers: { 'Authorization': token }
         })
-            .then(() => setTasks(tasks.filter(task => task.id !== id)));
+            .then(() => setTasks(tasks.filter(task => task.id !== id)))
+            .catch(err => console.log('Error deleting task:', err));
     };
 
     const handleEditTask = (id, newText) => {
@@ -50,7 +53,8 @@ function TaskList({ API_URL }) {
                     task.id === id ? { ...task, text: newText } : task
                 );
                 setTasks(updatedTasks);
-            });
+            })
+            .catch(err => console.log('Error editing task:', err));
     };
 
     const categories = ['All', 'Personal', 'Work', 'Shopping', 'Others'];
@@ -91,7 +95,7 @@ function TaskList({ API_URL }) {
             </div>
 
             <ul className="task-list">
-                {filteredTasks.map((task, index) => (
+                {filteredTasks.map((task) => (
                     <li className="task-item" key={task.id}>
                         <span className="task-text">{task.text}</span>
                         <span className="task-category">{task.category}</span>
