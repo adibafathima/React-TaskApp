@@ -4,7 +4,7 @@ import Register from './Register';
 import Dashboard from './Dashboard';
 import './App.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://react-taskapp.onrender.com';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
