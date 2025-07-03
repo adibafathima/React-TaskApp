@@ -10,7 +10,7 @@ function TaskList({ API_URL }) {
 
     useEffect(() => {
         fetch(API_URL + '/tasks', {
-            headers: { 'Authorization': token }
+            headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => res.json())
             .then(data => setTasks(data));
