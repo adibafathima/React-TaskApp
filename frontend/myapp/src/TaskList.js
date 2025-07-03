@@ -20,7 +20,7 @@ function TaskList({ API_URL }) {
         if (input.trim() !== '') {
             fetch(API_URL + '/tasks', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ text: input, category: category })
             })
                 .then(res => res.json())
@@ -41,7 +41,7 @@ function TaskList({ API_URL }) {
     const handleEditTask = (id, newText) => {
         fetch(`${API_URL}/tasks/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': token },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ text: newText })
         })
             .then(res => res.json())
