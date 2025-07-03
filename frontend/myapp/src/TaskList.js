@@ -3,14 +3,14 @@ import React, { useState, useEffect } from 'react';
 function TaskList({ API_URL }) {
     const [tasks, setTasks] = useState([]);
     const [input, setInput] = useState('');
-    const [category, setCategory] = useState('Personal');
+    const [category, setCategory] = useState('All');
     const [filter, setFilter] = useState('All');
 
     const token = localStorage.getItem('token');
 
     useEffect(() => {
         fetch(`${API_URL}/tasks`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 'Authorization': token }
         })
             .then(res => res.json())
             .then(data => setTasks(data));
@@ -20,7 +20,7 @@ function TaskList({ API_URL }) {
         if (input.trim() !== '') {
             fetch(`${API_URL}/tasks`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                headers: { 'Content-Type': 'application/json', 'Authorization': token },
                 body: JSON.stringify({ text: input, category: category })
             })
                 .then(res => res.json())
@@ -41,7 +41,7 @@ function TaskList({ API_URL }) {
     const handleEditTask = (id, newText) => {
         fetch(`${API_URL}/tasks/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': token },
             body: JSON.stringify({ text: newText })
         })
             .then(res => res.json())
