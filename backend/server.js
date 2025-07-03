@@ -28,6 +28,10 @@ function verifyToken(req, res, next) {
     });
 }
 
+app.get('/', (req, res) => {
+    res.send('Backend is running successfully');
+});
+
 // Register new user
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
