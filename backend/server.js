@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const SECRET_KEY = 'mysecretkey';
+const SECRET_KEY = process.env.SECRET_KEY || 'mysecretkey'; 
 
 
 
