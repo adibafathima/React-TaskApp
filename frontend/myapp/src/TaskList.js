@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function TaskList({ API_URL }) {
     const [tasks, setTasks] = useState([]);
     const [input, setInput] = useState('');
-    const [category, setCategory] = useState('Personal'); // ✅ Should not default to 'All'
+    const [category, setCategory] = useState('All');
     const [filter, setFilter] = useState('All');
 
     const token = localStorage.getItem('token');
@@ -13,8 +13,18 @@ function TaskList({ API_URL }) {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
-            .then(data => setTasks(data))
-            .catch(err => console.log('Error fetching tasks:', err));
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setTasks(data);
+                } else {
+                    console.error("Unexpected response:", data);
+                    setTasks([]);
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching tasks:", err);
+                setTasks([]);
+            });
     }, [API_URL, token]);
 
     const handleAddTask = () => {
@@ -26,7 +36,7 @@ function TaskList({ API_URL }) {
             })
                 .then(res => res.json())
                 .then(newTask => setTasks([...tasks, newTask]))
-                .catch(err => console.log('Error adding task:', err));
+                .catch(err => console.error("Error adding task:", err));
 
             setInput('');
         }
@@ -37,8 +47,8 @@ function TaskList({ API_URL }) {
             method: 'DELETE',
             headers: { 'Authorization': token }
         })
-            .then(() => setTasks(tasks.filter(task => task.id !== id)))
-            .catch(err => console.log('Error deleting task:', err));
+            .then(() => setTasks(tasks.filter(task => task._id !== id)))
+            .catch(err => console.error("Error deleting task:", err));
     };
 
     const handleEditTask = (id, newText) => {
@@ -50,15 +60,17 @@ function TaskList({ API_URL }) {
             .then(res => res.json())
             .then(() => {
                 const updatedTasks = tasks.map(task =>
-                    task.id === id ? { ...task, text: newText } : task
+                    task._id === id ? { ...task, text: newText } : task
                 );
                 setTasks(updatedTasks);
             })
-            .catch(err => console.log('Error editing task:', err));
+            .catch(err => console.error("Error editing task:", err));
     };
 
     const categories = ['All', 'Personal', 'Work', 'Shopping', 'Others'];
-    const filteredTasks = filter === 'All' ? tasks : tasks.filter(task => task.category === filter);
+    const filteredTasks = Array.isArray(tasks)
+        ? (filter === 'All' ? tasks : tasks.filter(task => task.category === filter))
+        : [];
 
     return (
         <div className="app">
@@ -95,15 +107,15 @@ function TaskList({ API_URL }) {
             </div>
 
             <ul className="task-list">
-                {filteredTasks.map((task) => (
-                    <li className="task-item" key={task.id}>
+                {Array.isArray(filteredTasks) && filteredTasks.map((task) => (
+                    <li className="task-item" key={task._id}>
                         <span className="task-text">{task.text}</span>
                         <span className="task-category">{task.category}</span>
                         <div className="task-buttons">
-                            <button className="delete-button" onClick={() => handleDeleteTask(task.id)}>Delete</button>
+                            <button className="delete-button" onClick={() => handleDeleteTask(task._id)}>Delete</button>
                             <button className="edit-button" onClick={() => {
                                 const newText = prompt('Enter new task text:', task.text);
-                                if (newText) handleEditTask(task.id, newText);
+                                if (newText) handleEditTask(task._id, newText);
                             }}>Edit</button>
                         </div>
                     </li>
